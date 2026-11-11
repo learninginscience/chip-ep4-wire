@@ -143,7 +143,15 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
 .label{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
 .isoBox{padding:12px 14px}
 .isoBox .label{margin-bottom:4px}
-.isoBox svg{max-height:40vh}
+@media (min-width:901px){body.playing header{margin-bottom:6px}body.playing .eyebrow{display:none}body.playing h1{font-size:22px}body.playing .map{padding:6px 14px;margin-bottom:10px}body.playing .stop span{font-size:11px}}
+#iso{position:relative;height:300px}
+#iso > svg,.iso3d > svg{width:100%;height:100%;display:block}
+.iso3d{position:relative;height:clamp(260px,46vh,400px)}
+.chip3d{width:100%!important;height:100%!important;display:block;touch-action:none;cursor:grab}
+.chip3d:active{cursor:grabbing}
+.chip3dUi{position:absolute;right:4px;bottom:4px;display:flex;gap:6px}
+.chip3dUi .iconBtn{padding:4px 10px;font-size:13px;font-weight:700}
+.chip3dTip{position:absolute;left:6px;top:4px;font-size:12px;color:var(--muted);pointer-events:none}
 .isoKey{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-top:6px}
 .isoKey span{display:inline-flex;align-items:center;gap:6px}
 .isoKey i{width:14px;height:14px;border-radius:3px;flex:none}
@@ -233,8 +241,8 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
 .hold{position:fixed;inset:0;background:rgba(10,14,36,.78);display:flex;align-items:center;justify-content:center;padding:16px;z-index:30;touch-action:none}
 .hold .dialog{max-width:560px;text-align:center}
 .hold .holdIco{font-size:56px;line-height:1;margin:6px 0 2px}
-.dialog{background:var(--panel);color:var(--ink);border-radius:22px;max-width:760px;width:100%;max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)}
-.dlgGrid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:18px;align-items:center;margin-top:14px}
+.dialog{background:var(--panel);color:var(--ink);border-radius:22px;max-width:880px;width:100%;max-height:calc(100vh - 32px);overflow:auto;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.dlgGrid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.3fr);gap:18px;align-items:center;margin-top:14px}
 @media (max-width:620px){.dlgGrid{grid-template-columns:minmax(0,1fr)}}
 .solGrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:14px;margin-top:14px}
 .solFig{margin:0;display:flex;flex-direction:column;align-items:center;gap:6px}
@@ -294,7 +302,6 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
     <aside class="side">
       <div class="card task" id="task"></div>
       <div class="card isoBox">
-        <p class="label">立體的晶片（接好的導線會長在這裡）</p>
         <div id="iso"></div>
         <div id="isoKey"></div>
       </div>
@@ -565,7 +572,7 @@ function renderMap(){
   const got = extra.parts || [];
   $('bagSlots').innerHTML = BAG_ORDER.map(id => got.includes(id) ? `<span class="slot pop" title="${PARTS[id].t}" style="border:none;${swStyle(PARTS[id].sw)}"></span>` : '<span class="slot"></span>').join('');
 }
-function showCard(html){ $('gameView').hidden = true; $('cardView').hidden = false; $('cardView').innerHTML = html; }
+function showCard(html){ document.body.classList.remove('playing'); $('gameView').hidden = true; $('cardView').hidden = false; $('cardView').innerHTML = html; }
 
 function renderStep(){
   closeOverlay(); renderMap();
@@ -970,7 +977,7 @@ function startLevel(key){
         allow: lv.layers === 'yes' || (lv.layers === 'gated' && !!(A.q3 && A.q3.solved)) };
   S.nudge = lv.layers === 'yes';
   for (const [k,[x,y]] of Object.entries(lv.nodes)) S.nodeAt[y*lv.W + x] = k;
-  $('cardView').hidden = true; $('cardView').innerHTML = ''; $('gameView').hidden = false;
+  $('cardView').hidden = true; $('cardView').innerHTML = ''; $('gameView').hidden = false; document.body.classList.add('playing');
   clearTimeout(skipTimer);
   if (!bonusMode && key !== 'practice') skipTimer = setTimeout(() => { if (S.key === key && !S.finished){ S.canSkip = true; renderTask(); } }, 150000);
   clearTimeout(peekTimer);
@@ -1122,7 +1129,7 @@ function isoSVG(lv, layers, big){
   const used = Math.max(1, layers.reduce((m,ws,k) => ws.length ? k+1 : m, 0), layers.length);
   // 跟棋盤同一個方向（A 左上、D 右下），只是往後傾斜：像從前面低一點的地方看同一塊晶片
   const s = (big ? 300 : 280) / Math.max(W, H), sx = s, sk = s*0.26, sy = s*0.4, hw = big ? 26 : 22, hv = big ? 22 : 18, thick = 14;
-  const zb = k => k*(hw+hv), zw = k => zb(k) + hw/2;   // 第 k 層的底、導線所在高度
+  const zb = k => k*(hw+hv), zw = k => k ? zb(k) + hw/2 : 3;   // 第 k 層的底、導線所在高度；第 1 層導線直接壓在電晶體上
   const P3 = (x,y,z) => [ x*sx - y*sk, y*sy - z ];
   const poly = a => a.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
   const topZ = zb(used-1) + hw;
@@ -1148,8 +1155,8 @@ function isoSVG(lv, layers, big){
     return `<polygon points="${poly([P3(x-r,y-r,z),P3(x+r,y-r,z),P3(x+r,y+r,z),P3(x-r,y+r,z)])}" style="fill:${mc(top[c])};stroke:var(--panel);stroke-width:.8"/>`; };
   for (let k=0;k<used;k++){
     const z = zw(k);
-    // 從下面一路往上的金屬柱：矽晶圓到第 1 層、或上一層到這一層
-    cols.forEach(c => { if (top[c] >= k) o += pillar(c, k ? zw(k-1) : 0, z); });
+    // 往上接的金屬柱：上一層的接腳到這一層
+    if (k) cols.forEach(c => { if (top[c] >= k) o += pillar(c, zw(k-1), z); });
     o += slab(zb(k), z, .32);
     (layers[k] || []).forEach(w => { const p = w.path.map(c => { const [x,y] = cxy(c); return P3(x,y,z); });
       o += `<polyline points="${poly(p)}" fill="none" style="stroke:${mc(k)};stroke-width:${big?5:4};stroke-linecap:round;stroke-linejoin:round"/>`; });
@@ -1163,6 +1170,175 @@ function isoSVG(lv, layers, big){
   o += `<text x="${bp[0]+10}" y="${bp[1]+4}" style="fill:var(--muted);font:700 12px var(--f-body)">矽晶圓</text>`;
   return o + '</svg>';
 }
+/* ================= 立體晶片（three.js，可以用手指轉視角） =================
+   three.js 從 CDN 載入；載不到（學校網路擋掉）就退回上面的 isoSVG 平面圖，遊戲照玩。
+   結構跟 isoSVG 一樣：矽晶圓 → 第 1 層導線 → 不導電材料（只有接腳柱）→ 第 2 層導線 …，
+   每一層的邊框用那一層導線的顏色，旁邊標字；「拉開每一層」把層與層之間的空隙拉大，露出金屬柱。 */
+let THREE = null, threeP = null;
+function loadThree(){
+  if (!threeP) threeP = import('https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.module.min.js')
+    .catch(() => import('https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js'))
+    .then(m => (THREE = m), e => { console.warn('three.js 載入失敗，改用平面圖', e); return null; });
+  return threeP;
+}
+function chip3D(box, apart0){
+  const T = THREE, css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const col = n => new T.Color(css(n) || '#888');
+  const renderer = new T.WebGLRenderer({ antialias:true, alpha:true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  const cv = renderer.domElement; cv.className = 'chip3d';
+  cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', '立體的晶片，用手指拖曳可以轉動視角');
+  box.innerHTML = ''; box.appendChild(cv);
+  const ui = document.createElement('div'); ui.className = 'chip3dUi';
+  ui.innerHTML = '<button type="button" class="iconBtn" data-a="apart"></button><button type="button" class="iconBtn" data-a="reset">轉回原本角度</button>';
+  box.appendChild(ui);
+  const tip = document.createElement('div'); tip.className = 'chip3dTip'; tip.textContent = '用手指拖曳，可以轉動晶片'; box.appendChild(tip);
+  const scene = new T.Scene(), cam = new T.PerspectiveCamera(30, 1, 0.1, 300);
+  scene.add(new T.AmbientLight(0xffffff, 1.5));
+  const sun = new T.DirectionalLight(0xffffff, 2.4); sun.position.set(-5, 12, 8); scene.add(sun);
+  const fill = new T.DirectionalLight(0xffffff, .8); fill.position.set(6, 4, -6); scene.add(fill);
+  const root = new T.Group(); scene.add(root);
+  const AZ0 = 0.32, EL0 = 0.5;
+  const v = { az:AZ0, el:EL0, apart:apart0, goal:apart0, lv:null, layers:null, center:new T.Vector3(), corners:[], dead:false };
+
+  const textTex = (text, color, w = 288, h = 64, size = 36) => {
+    const c = document.createElement('canvas'); c.width = w; c.height = h;
+    const g = c.getContext('2d'); g.font = `900 ${size}px "Noto Sans TC","PingFang TC","Microsoft JhengHei",sans-serif`;
+    g.fillStyle = color; g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillText(text, 4, h/2);
+    const t = new T.CanvasTexture(c); t.colorSpace = T.SRGBColorSpace; return t;
+  };
+  const label = (text, color, x, y, z) => {
+    const s = new T.Sprite(new T.SpriteMaterial({ map:textTex(text, color), depthTest:false, transparent:true }));
+    s.center.set(0, .5); s.scale.set(3.4, .76, 1); s.position.set(x, y, z); s.renderOrder = 10; root.add(s);
+  };
+  const faded = k => v.focus != null && k !== v.focus;   // 不是正在畫的那一層
+  const mesh = (geo, color, x, y, z, extra = {}) => {
+    const m = new T.Mesh(geo, new T.MeshLambertMaterial(Object.assign({ color }, extra)));
+    m.position.set(x, y, z); root.add(m); return m;
+  };
+  const clear = () => { root.traverse(o => { if (o.geometry) o.geometry.dispose(); if (o.material){ if (o.material.map) o.material.map.dispose(); o.material.dispose(); } }); root.clear(); };
+
+  function build(){
+    clear();
+    const lv = v.lv, layers = v.layers, W = lv.W, H = lv.H;
+    const used = Math.max(1, layers.reduce((m,ws,k) => ws.length ? k+1 : m, 0), layers.length);
+    const top = topLayerAt(layers), cells = Object.keys(top).map(Number);
+    const at = c => [c % W + .5, Math.floor(c / W) + .5];
+    const TW = .5, TV = .42, gap = .1 + v.apart * .8;
+    // 由下往上排每一片：導線層、不導電材料（只有接腳柱）交錯
+    const slabs = []; let y = .11;   // 第 1 層直接做在晶圓上（EP5：導電膠帶直接貼在模擬電晶體上）
+    for (let k=0;k<used;k++){
+      slabs.push({ kind:'w', k, y0:y, y1:y + TW }); y += TW + gap;
+      if (k < used-1){ slabs.push({ kind:'v', k, y0:y, y1:y + TV }); y += TV + gap; }
+    }
+    const wireY = k => { const s = slabs.find(s => s.kind === 'w' && s.k === k); return k ? (s.y0 + s.y1) / 2 : s.y0 + .08; };
+    // 矽晶圓與電晶體
+    mesh(new T.BoxGeometry(W + .4, .36, H + .4), col('--si-edge'), W/2, -.18, H/2);
+    mesh(new T.BoxGeometry(W + .4, .02, H + .4), col('--si'), W/2, .01, H/2);
+    for (const [name, [x, z]] of Object.entries(lv.nodes)){
+      mesh(new T.BoxGeometry(.66, .1, .66), col('--chip'), x + .5, .06, z + .5);
+      const p = new T.Mesh(new T.PlaneGeometry(.5, .5), new T.MeshBasicMaterial({ map:textTex(name, css('--chip-ink') || '#fff', 64, 64, 46), transparent:true }));
+      p.rotation.x = -Math.PI/2; p.position.set(x + .5, .115, z + .5); root.add(p);
+      const tag = new T.Sprite(new T.SpriteMaterial({ map:textTex(name, '#ffffff', 64, 64, 44), depthTest:false, transparent:true }));
+      const bg = new T.Sprite(new T.SpriteMaterial({ color:col('--chip'), depthTest:false }));
+      bg.scale.set(.42, .42, 1); bg.position.set(x + .5, -.42, z + .95); bg.renderOrder = 11; root.add(bg);
+      tag.scale.set(.42, .42, 1); tag.position.set(x + .5, -.42, z + .95); tag.renderOrder = 12; root.add(tag);
+    }
+    label('矽晶圓', css('--muted'), W + .85, -.18, H + .2);
+    // 每一片不導電材料：半透明，加上邊框
+    slabs.forEach(s => {
+      const h = s.y1 - s.y0, edge = s.kind === 'w' ? col(MCOL[s.k]) : col('--oxide-deep');
+      const m = mesh(new T.BoxGeometry(W + .2, h, H + .2), col('--oxide'), W/2, s.y0 + h/2, H/2,
+        { transparent:true, opacity: s.kind === 'w' ? .16 : .1, depthWrite:false });
+      m.renderOrder = 2;
+      const e = new T.LineSegments(new T.EdgesGeometry(m.geometry), new T.LineBasicMaterial({ color:edge, transparent:true, opacity: s.kind === 'w' ? (faded(s.k) ? .45 : 1) : .55 }));
+      e.position.copy(m.position); root.add(e);
+      label(s.kind === 'w' ? `${v.focus === s.k ? '▶ ' : ''}第 ${s.k+1} 層導線` : '不導電材料', s.kind === 'w' ? css(MCOL[s.k]) : css('--oxide'), W + .85, s.y0 + h/2, H + .2);
+    });
+    // 導線：一段一段的方條，轉角補一個方塊
+    layers.forEach((ws, k) => ws.forEach(w => {
+      const c = col(MCOL[k]), yy = wireY(k), fx = faded(k) ? { transparent:true, opacity:.3 } : {};
+      w.path.forEach((cell, i) => {
+        const [x, z] = at(cell);
+        mesh(new T.BoxGeometry(.3, .16, .3), c, x, yy, z, fx);
+        if (i){ const [px, pz] = at(w.path[i-1]);
+          mesh(new T.BoxGeometry(Math.abs(x-px) + .3, .16, Math.abs(z-pz) + .3), c, (x+px)/2, yy, (z+pz)/2, fx); }
+      });
+    }));
+    // 接腳和金屬柱：從電晶體一路接到最上面那條導線；經過的每一層導線都有一塊接腳，不導電材料裡是填了金屬的洞
+    cells.forEach(cell => {
+      const [x, z] = at(cell), c = col(MCOL[top[cell]]), yTop = wireY(top[cell]), fx = faded(top[cell]) ? { transparent:true, opacity:.3 } : {};
+      const y0 = wireY(0);
+      if (top[cell] > 0) mesh(new T.CylinderGeometry(.1, .1, yTop - y0, 16), c, x, (yTop + y0) / 2, z, fx);
+      for (let k=0;k<=top[cell];k++) mesh(new T.BoxGeometry(.5, .16, .5), c, x, wireY(k), z, fx);
+      slabs.filter(s => s.kind === 'v' && s.k < top[cell]).forEach(s => mesh(new T.CylinderGeometry(.17, .17, s.y1 - s.y0, 20), c, x, (s.y0 + s.y1) / 2, z, fx));
+    });
+    // 要塞進畫面的範圍：晶片本體加上右邊的字
+    v.corners = [];
+    for (const cx of [-.2, W + 3.9]) for (const cy of [-.6, y]) for (const cz of [-.2, H + 1.2]) v.corners.push(new T.Vector3(cx, cy, cz));
+    v.center.set((W + 3.7) / 2, (y - .6) / 2, (H + 1) / 2);
+    place();
+  }
+  function place(){
+    const r = box.getBoundingClientRect(), w = Math.max(1, r.width), h = Math.max(1, r.height);
+    renderer.setSize(w, h, false); cam.aspect = w / h;
+    // 先放遠一點，量八個角投影到畫面上有多大，再把鏡頭拉近到剛好塞滿
+    const aim = d => { cam.position.set(v.center.x + d*Math.cos(v.el)*Math.sin(v.az), v.center.y + d*Math.sin(v.el), v.center.z + d*Math.cos(v.el)*Math.cos(v.az));
+      cam.lookAt(v.center); cam.updateProjectionMatrix(); cam.updateMatrixWorld(); };
+    let dist = 40;
+    for (let i=0;i<3;i++){
+      aim(dist);
+      dist *= Math.max(...v.corners.map(p => { const q = p.clone().project(cam); return Math.max(Math.abs(q.x), Math.abs(q.y)); })) * 1.04;
+    }
+    aim(dist);
+    renderer.render(scene, cam);
+  }
+  const apartBtn = ui.querySelector('[data-a="apart"]');
+  const syncBtn = () => { apartBtn.textContent = v.goal > .5 ? '合起來' : '拉開每一層'; };
+  syncBtn();
+  let tween = 0;
+  apartBtn.onclick = () => {
+    v.goal = v.goal > .5 ? .05 : 1; syncBtn(); cancelAnimationFrame(tween);
+    const from = v.apart, t0 = performance.now();
+    const step = t => { if (v.dead) return; const p = Math.min(1, (t - t0) / 450), e = p < .5 ? 2*p*p : 1 - Math.pow(-2*p + 2, 2)/2;
+      v.apart = from + (v.goal - from) * e; build(); if (p < 1) tween = requestAnimationFrame(step); };
+    tween = requestAnimationFrame(step);
+  };
+  ui.querySelector('[data-a="reset"]').onclick = () => { v.az = AZ0; v.el = EL0; place(); };
+  // 拖曳轉視角：左右轉一圈，上下限制在不會鑽到晶片底下
+  let drag = null;
+  cv.addEventListener('pointerdown', e => { drag = { x:e.clientX, y:e.clientY, az:v.az, el:v.el }; try { cv.setPointerCapture(e.pointerId); } catch(err){} tip.hidden = true; });
+  cv.addEventListener('pointermove', e => { if (!drag) return;
+    v.az = drag.az - (e.clientX - drag.x) * .012; v.el = Math.max(.08, Math.min(1.5, drag.el + (e.clientY - drag.y) * .01)); place(); });
+  const end = () => { drag = null; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end);
+  const ro = new ResizeObserver(() => { if (!v.dead) place(); }); ro.observe(box);
+  return {
+    set(lv, layers, focus){ v.lv = lv; v.focus = focus; v.layers = layers.map(ws => ws.map(w => ({ net:w.net, path:w.path.slice() }))); build(); },
+    dispose(){ v.dead = true; cancelAnimationFrame(tween); ro.disconnect(); clear(); renderer.dispose(); box.innerHTML = ''; },
+  };
+}
+// 在一個框框裡畫立體晶片：three.js 載好就用 3D，還沒載好先放平面圖、載好再換
+let side3D = null, dlg3D = [];
+function show3D(box, lv, layers, big){
+  if (THREE){
+    try { const c = chip3D(box, 1); c.set(lv, layers, big || layers.length < 2 ? null : S.cur); return c; } catch(e){ console.warn(e); }
+  }
+  box.innerHTML = isoSVG(lv, layers, big);
+  return null;
+}
+function drawSide3D(){
+  const box = $('iso');
+  if (THREE && side3D){ side3D.set(L(), S.layers, S.layers.length > 1 ? S.cur : null); return; }
+  if (THREE){ side3D = show3D(box, L(), S.layers, false); return; }
+  box.innerHTML = isoSVG(L(), S.layers, false);
+  loadThree().then(m => { if (m && S && !$('gameView').hidden && !side3D){ side3D = show3D(box, L(), S.layers, false); } });
+}
+function mountDlg3D(id, lv, layers){
+  const box = $(id); if (!box) return;
+  const c = show3D(box, lv, layers, true); if (c) dlg3D.push(c);
+}
+function disposeDlg3D(){ dlg3D.forEach(c => c.dispose()); dlg3D = []; }
 // 圖例：放在立體圖下面
 const isoKey = () => `<div class="isoKey"><span><i class="k-pad"></i>接腳和金屬柱（往下接到電晶體）</span><span><i class="k-ox"></i>不導電材料</span><span><i class="k-chip"></i>電晶體</span></div>`;
 
@@ -1246,14 +1422,14 @@ function renderHud(){
   top.classList.toggle('nudge', !!S.nudge);
 }
 $('addTop').onclick = () => { if (S && S.allow) addLayer(); };
-function renderAll(){ renderMap(); renderTask(); renderNets(); renderLayers(); renderHud(); renderBoard(); $('iso').innerHTML = isoSVG(L(), S.layers, false); $('isoKey').innerHTML = isoKey(); $('hint').hidden = stats().done > 0; fitIso(); }
+function renderAll(){ renderMap(); renderTask(); renderNets(); renderLayers(); renderHud(); renderBoard(); drawSide3D(); $('isoKey').innerHTML = isoKey(); $('hint').hidden = stats().done > 0; fitIso(); }
 // 平板橫放時讓右欄剛好一個畫面：每關說明長短不同，立體圖用剩下的高度
 function fitIso(){
-  const svg = $('iso').querySelector('svg'); if (!svg || $('gameView').hidden) return;
-  if (innerWidth <= 900){ svg.style.maxHeight = ''; return; }
-  svg.style.maxHeight = '0px';
-  const side = document.querySelector('.side'), r = side.getBoundingClientRect();
-  svg.style.maxHeight = Math.max(120, innerHeight - (r.top + scrollY) - r.height - 12) + 'px';
+  const box = $('iso'); if ($('gameView').hidden) return;
+  if (innerWidth <= 900){ box.style.height = ''; return; }
+  box.style.height = '0px';
+  const r = document.querySelector('.side').getBoundingClientRect();
+  box.style.height = Math.max(150, innerHeight - (r.top + scrollY) - r.height - 12) + 'px';
 }
 addEventListener('resize', fitIso);
 
@@ -1286,10 +1462,11 @@ function showLevelDone(){
     <div class="dlgGrid">
       <div>${talk(r.img, r.text, 'ok', true)}${r.part && !bonusMode ? gainHTML(r.part) : ''}
         <div class="stats"><div class="h">導線層數</div><div class="h">導線總長</div><div class="n">${st.used} 層</div><div class="n">${st.len} 格</div></div></div>
-      <div>${isoSVG(lv, S.layers, true)}${isoKey()}</div>
+      <div><div class="iso3d" id="dlgIso"></div>${isoKey()}</div>
     </div>
     <div class="actions">${SOLUTIONS[S.key] ? '<button class="btn big" type="button" id="seeSol">看最佳解答</button>' : ''}<button class="btn ${SOLUTIONS[S.key] ? 'ghost' : 'big'}" type="button" id="dn">${bonusMode ? '回到工程師證' : lv.apart ? '拆開來看每一層' : '繼續前進'}</button></div></div>`);
   const layers = S.layers;
+  mountDlg3D('dlgIso', lv, layers);
   $('dn').onclick = () => { if (bonusMode) renderResult(); else if (lv.apart) showApart(lv, layers, next); else next(); };
   const ss = $('seeSol'); if (ss) ss.onclick = () => showSolution(S.key, st);
 }
@@ -1318,15 +1495,16 @@ function showSolution(key, mine){
     ${talk('bot_happy', `這是最省的接法：最少 ${d.minL} 層，導線加起來最短 ${d.len} 格。${cmp}一層一層看，同一層的導線都不會碰到，交錯的地方都分在不同層！`, 'ok', true)}
     <div class="solGrid">${layers.map((ws, k) => miniBoard(lv, ws, k)).join('')}</div>
     <p class="small" style="text-align:center;margin:10px 0 0">疊起來就是這樣：</p>
-    <div class="solIso">${isoSVG(lv, layers, true)}${isoKey()}</div>
+    <div class="solIso"><div class="iso3d" id="solIso3d"></div>${isoKey()}</div>
     <div class="actions">${bonusMode ? '<button class="btn big" type="button" id="solAgain">我也來試試</button><button class="btn ghost" type="button" id="solBack">回到工程師證</button>' : '<button class="btn big" type="button" id="solNext">繼續前進</button>'}</div></div>`);
+  mountDlg3D('solIso3d', lv, layers);
   const sa = $('solAgain'); if (sa) sa.onclick = () => { closeOverlay(); startLevel(key); };
   const sb = $('solBack'); if (sb) sb.onclick = () => renderResult();
   const sn = $('solNext'); if (sn) sn.onclick = () => next();
 }
 
-function openOverlay(html){ $('dialog').innerHTML = html; $('overlay').hidden = false; const b = $('dialog').querySelector('button'); if (b) b.focus(); }
-function closeOverlay(){ $('overlay').hidden = true; $('dialog').innerHTML = ''; }
+function openOverlay(html){ disposeDlg3D(); $('dialog').innerHTML = html; $('overlay').hidden = false; const b = $('dialog').querySelector('button'); if (b) b.focus(); }
+function closeOverlay(){ disposeDlg3D(); $('overlay').hidden = true; $('dialog').innerHTML = ''; }
 
 $('undo').onclick = () => {
   if (!S || S.finished) return;
@@ -1337,6 +1515,7 @@ $('undo').onclick = () => {
 $('reset').onclick = () => { if (S && !S.finished) startLevel(S.key); };
 
 /* ================= 啟動 ================= */
+loadThree();   // 先載 3D，進到第一關時通常已經好了
 try { new URLSearchParams(location.search).forEach((v, k) => { params[k] = v; }); } catch(e){}
 renderStart();
 })();

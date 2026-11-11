@@ -19,6 +19,7 @@
 | `src/game.src.html` | 學生端原始檔（關卡、接線引擎、組裝晶片、單人與房間模式、暫停／結束畫面） |
 | `src/teacher.src.html` | 老師投影頁原始檔（開房間、大廳、即時排行榜、暫停／繼續、頒獎台、各題統計、下載 Excel） |
 | `src/play_boot.js` | 直接玩版的啟動程式：組建時取代學生頁最後的 `renderStart();`，進度改存 sessionStorage |
+| （外部）three.js 0.160 | 右邊的立體晶片圖，執行時從 cdnjs／jsdelivr 載入；載不到就退回 `isoSVG` 平面圖。不用放進 repo |
 | `src/live_core.js` | 兩頁共用的即時房間核心（Firebase 正式模式＋`?mock=1` 測試模式） |
 | `src/firebase_config.json` | Firebase 網頁設定（公開資訊，不是密碼） |
 | `src/chars/*.jpg` | 角色圖，取自 EP4 影片畫面 |
