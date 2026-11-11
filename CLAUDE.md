@@ -4,9 +4,10 @@
 
 **閱讀順序**：先讀這份，再讀 `docs/開發紀錄.md`（做過哪些改動、哪些做法已經被否決），以及 `docs/活動說明.md`（課堂流程、時間、計分與正確答案）。
 
-- 學生畫面：https://pxchen-89.github.io/chip-ep4/
-- 老師投影頁：https://pxchen-89.github.io/chip-ep4/teacher.html
-- 直接玩版：https://pxchen-89.github.io/chip-ep4/play.html （打開就是第一關，不登記名字、沒有房間、不上傳資料）
+- 學生畫面：https://learninginscience.github.io/chip-ep4-wire/
+- 老師投影頁：https://learninginscience.github.io/chip-ep4-wire/teacher.html
+- 直接玩版：https://learninginscience.github.io/chip-ep4-wire/play.html （打開就是第一關，不登記名字、沒有房間、不上傳資料）
+- 原始碼：https://github.com/learninginscience/chip-ep4-wire （2026-11-11 從 pxchen-89/chip-ep4 搬進 LIS 組織；舊網址 pxchen-89.github.io/chip-ep4 會自動轉到新網址）。組織裡另一個 `learninginscience/chip-ep4` 只是轉址頁，不要在那裡改
 - 對象：國小高年級，用平板或手機。
 - 教學目標（簡報第 3 頁）：晶片的結構是先在一塊半導體材料上做出所有需要的電子零件，接著在上面一層一層地蓋出讓電子零件彼此連接的導線。
 - **定位**：這個活動取代 EP4 影片版簡報第 48 頁的「假設」提問（「晶片的結構會長怎樣？」），玩完接第 49 頁老師統整。不是課後評量，也不是擴充新內容。
@@ -34,7 +35,7 @@
 1. 只改 `src/` 裡的檔案（或 `firestore.rules`）。
 2. 在專案根目錄執行 `python build.py`。
 3. 本機測試：`python -m http.server 8765`，打開 `http://localhost:8765/`（學生）與 `http://localhost:8765/teacher.html`（老師）。
-4. 推上 GitHub：`git add -A`、`git commit`、`git push`。GitHub Pages 約 1 分鐘內自動更新，不需要到 GitHub 網頁做任何設定。
+4. 開新分支、推上去、開 PR 給 pxchen-89 審核（步驟見 `CONTRIBUTING.md`）。main 只有 pxchen-89 能更新；合併後 GitHub Pages 約 1 分鐘內自動更新。
 5. 如果改了 `firestore.rules`，要請專案擁有者到 Firebase 主控台的 Firestore →「規則」分頁，全選刪掉舊規則、貼上新規則、按「發布」。規則沒發布前，新增的資料欄位會被拒絕。
 
 ## 測試方法

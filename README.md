@@ -6,9 +6,9 @@ LIS 情境科學教材「晶片系列 EP4：晶片的誕生」課堂結尾活動
 
 ## 上課使用
 
-- **學生自己玩**：https://pxchen-89.github.io/chip-ep4/ ，掃 QR code 或打開網址就能開始，不用登入、不用安裝。這個模式不記錄任何資料。
-- **直接玩版**：https://pxchen-89.github.io/chip-ep4/play.html ，打開就是第一關，連名字都不用輸入，適合沒有要比賽、只想讓學生直接體驗的時候。
-- **全班即時競賽**：老師打開 https://pxchen-89.github.io/chip-ep4/teacher.html ，按「開新的一場」，投影房間代碼與 QR code。學生加入後等老師按開始，投影幕即時顯示排行榜，老師可以暫停（全班學生畫面一起停住）、繼續，按結束時學生畫面停在結束頁、投影幕出現頒獎台。可以看各題第一次答對的情況，也可以下載 Excel 成績。
+- **學生自己玩**：https://learninginscience.github.io/chip-ep4-wire/ ，掃 QR code 或打開網址就能開始，不用登入、不用安裝。這個模式不記錄任何資料。
+- **直接玩版**：https://learninginscience.github.io/chip-ep4-wire/play.html ，打開就是第一關，連名字都不用輸入，適合沒有要比賽、只想讓學生直接體驗的時候。
+- **全班即時競賽**：老師打開 https://learninginscience.github.io/chip-ep4-wire/teacher.html ，按「開新的一場」，投影房間代碼與 QR code。學生加入後等老師按開始，投影幕即時顯示排行榜，老師可以暫停（全班學生畫面一起停住）、繼續，按結束時學生畫面停在結束頁、投影幕出現頒獎台。可以看各題第一次答對的情況，也可以下載 Excel 成績。
 
 ## 想修改遊戲
 
