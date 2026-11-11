@@ -7,7 +7,7 @@
 :root{
   --bg:#e9edf5; --panel:#ffffff; --ink:#1b2142; --muted:#5a6286; --line:#d3d9e8;
   --si:#dfe3ec; --si-grid:#c4cadb; --si-edge:#b3bace;
-  --oxide:#e48fcb; --oxide-ink:#3a0f2c; --oxide-deep:#b85a98; --navy:#2b3f8a; --navy-soft:#dfe4f6;
+  --oxide:#e48fcb; --oxide-ink:#3a0f2c; --oxide-deep:#b85a98; --oxide-soft:#f8dff0; --navy:#2b3f8a; --navy-soft:#dfe4f6;
   --m1:#d99a12; --m2:#14a191; --m3:#d64f78; --m4:#6a63d8; --m5:#3a8fd9;
   --danger:#e3412a; --ok:#25965a; --ok-soft:#dcf3e5; --warm-soft:#fff3d6;
   --chip:#2b3f8a; --chip-ink:#ffffff; --bubble:#f3f5fb;
@@ -19,7 +19,7 @@
   :root:not([data-theme="light"]){
     --bg:#11152e; --panel:#1a1f40; --ink:#eef0fb; --muted:#a2a9cc; --line:#2e3566;
     --si:#262c52; --si-grid:#363e6e; --si-edge:#1c2146;
-    --oxide:#e48fcb; --oxide-ink:#2a0a20; --oxide-deep:#9a4a80; --navy:#8fa2ff; --navy-soft:#262f63;
+    --oxide:#e48fcb; --oxide-ink:#2a0a20; --oxide-deep:#9a4a80; --oxide-soft:#4b2c49; --navy:#8fa2ff; --navy-soft:#262f63;
     --m1:#f2b733; --m2:#2fd0bd; --m3:#ff7aa0; --m4:#9b94ff; --m5:#62b3ff;
     --danger:#ff6a52; --ok:#4ccf86; --ok-soft:#173d2e; --warm-soft:#3b3218;
     --chip:#8fa2ff; --chip-ink:#11152e; --bubble:#232a55;
@@ -29,7 +29,7 @@
 :root[data-theme="dark"]{
   --bg:#11152e; --panel:#1a1f40; --ink:#eef0fb; --muted:#a2a9cc; --line:#2e3566;
   --si:#262c52; --si-grid:#363e6e; --si-edge:#1c2146;
-  --oxide:#e48fcb; --oxide-ink:#2a0a20; --oxide-deep:#9a4a80; --navy:#8fa2ff; --navy-soft:#262f63;
+  --oxide:#e48fcb; --oxide-ink:#2a0a20; --oxide-deep:#9a4a80; --oxide-soft:#4b2c49; --navy:#8fa2ff; --navy-soft:#262f63;
   --m1:#f2b733; --m2:#2fd0bd; --m3:#ff7aa0; --m4:#9b94ff; --m5:#62b3ff;
   --danger:#ff6a52; --ok:#4ccf86; --ok-soft:#173d2e; --warm-soft:#3b3218;
   --chip:#8fa2ff; --chip-ink:#11152e; --bubble:#232a55;
@@ -107,33 +107,62 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
 .err{color:var(--danger);font-size:15px;margin-top:8px;min-height:1.5em}
 
 /* 遊戲區 */
-.game{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:22px;align-items:start}
+/* 平板橫放：左邊棋盤、右邊立體圖並排，一個畫面不用捲動 */
+.game{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
 @media (max-width:900px){.game{grid-template-columns:minmax(0,1fr);gap:14px}.game > .side{display:contents}.game .task{order:-1}}
 .stage{display:flex;flex-direction:column;gap:8px;min-width:0}
-.hud{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;font-size:14px;color:var(--muted)}
-.hud .v{font-family:var(--f-mono);font-weight:700;color:var(--ink);font-size:18px;font-variant-numeric:tabular-nums;margin-left:4px}
-.msg{min-height:40px;display:flex;align-items:center}
+.hud{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13px;color:var(--muted);min-height:44px}
+.hud > span{white-space:nowrap}
+.hud .v{font-family:var(--f-mono);font-weight:700;color:var(--ink);font-size:16px;font-variant-numeric:tabular-nums;margin-left:4px}
+.hint{position:absolute;left:12%;right:12%;top:50%;transform:translateY(-50%);margin:0;text-align:center;font-size:14px;font-weight:700;color:var(--ink);background:var(--panel);opacity:.92;border-radius:999px;padding:4px 12px;pointer-events:none}
+.msg{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:center;pointer-events:none;z-index:2}
 .toast{opacity:0;background:var(--ink);color:var(--panel);font-weight:500;font-size:15px;line-height:1.4;padding:7px 16px;border-radius:999px;transition:opacity .2s;max-width:100%}
 .toast.show{opacity:1}
 .toast.bad{background:var(--danger);color:#fff}
-.boardBox{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(10px,2vw,22px);display:flex;justify-content:center}
+.boardBox{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:clamp(10px,1.6vw,18px);display:flex;justify-content:center}
 #board{width:100%;height:auto;max-height:70vh;display:block;touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair}
-.side{display:flex;flex-direction:column;gap:14px;min-width:0}
+@media (min-width:901px){#board{max-height:max(320px,calc(100vh - 275px));max-height:max(320px,calc(100dvh - 275px))}}
+.side{display:flex;flex-direction:column;gap:12px;min-width:0}
 .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px}
-.task .lvName{font-family:var(--f-display);font-size:22px;font-weight:900;letter-spacing:.04em;margin:0 0 10px}
-.task .lvName small{font-family:var(--f-mono);font-size:12px;font-weight:700;color:var(--muted);letter-spacing:.12em;display:block}
-.task .talk .face{width:72px;border-radius:14px}
-.task .bubble p{font-size:16px}
-.how{font-size:14px;color:var(--muted);margin:10px 0 0}
+.task{padding:12px 14px}
+.task .lvName{font-family:var(--f-display);font-size:19px;font-weight:900;letter-spacing:.04em;margin:0 0 6px}
+.task .lvName small{font-family:var(--f-mono);font-size:11px;font-weight:700;color:var(--muted);letter-spacing:.12em;margin-right:8px}
+.task .talk{gap:12px}
+.task .talk .face{width:52px;border-radius:12px}
+.task .bubble{padding:8px 12px}
+.task .bubble .nm{display:none}
+.task .bubble::before{top:14px}
+.task .bubble p{font-size:15px;line-height:1.55}
+.how{font-size:13px;color:var(--muted);margin:6px 0 0}
 .label{font-family:var(--f-mono);font-size:12px;letter-spacing:.12em;color:var(--muted);margin:0 0 10px}
-.nets{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:6px}
-.net{display:flex;align-items:center;gap:6px;border:1.5px dashed var(--line);border-radius:9px;padding:5px 8px;font-family:var(--f-mono);font-weight:700;font-size:15px;color:var(--muted)}
+.isoBox{padding:12px 14px}
+.isoBox .label{margin-bottom:4px}
+.isoBox svg{max-height:40vh}
+.isoKey{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:12px;color:var(--muted);margin-top:6px}
+.isoKey span{display:inline-flex;align-items:center;gap:6px}
+.isoKey i{width:14px;height:14px;border-radius:3px;flex:none}
+.isoKey .k-pad{background:var(--m2);box-shadow:inset 0 0 0 2px var(--panel)}
+.isoKey .k-ox{background:var(--oxide);opacity:.55}
+.isoKey .k-chip{background:var(--chip)}
+.ctrl{display:grid;gap:10px;padding:12px 14px}
+.ctrlRow{display:flex;align-items:center;gap:10px}
+.ctrlRow .label{margin:0;white-space:nowrap}
+.nets{display:flex;flex-wrap:wrap;gap:5px;flex:1;min-width:0}
+.net{display:flex;align-items:center;gap:5px;border:1.5px dashed var(--line);border-radius:9px;padding:3px 7px;font-family:var(--f-mono);font-weight:700;font-size:14px;color:var(--muted)}
 .net .sw{width:10px;height:10px;border-radius:3px;background:var(--line);flex:none}
 .net.done{border-style:solid;color:var(--ink)}
-.net .ly{margin-left:auto;font-size:11px;font-weight:500;color:var(--muted)}
-.layers{display:flex;flex-direction:column;gap:6px}
-.layerTab{display:flex;align-items:center;gap:10px;font:inherit;font-size:15px;text-align:left;border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:7px 12px;cursor:pointer}
-.layerTab .sw{width:26px;height:8px;border-radius:4px;flex:none}
+.net .ly{margin-left:4px;font-size:11px;font-weight:500;color:var(--muted)}
+.layers{display:flex;flex-wrap:wrap;align-items:center;gap:6px;min-width:0}
+.ctrl .row{gap:6px}
+.ctrl .row .btn{padding:6px 12px;font-size:14px}
+/* 拆開來看 */
+.apartRow{display:flex;align-items:flex-start;gap:6px;margin-top:14px;overflow-x:auto;padding-bottom:4px}
+.apartRow .solFig{flex:1 1 0;min-width:112px}
+.apartRow .solFig svg{max-width:170px}
+.apartRow .solFig figcaption{font-family:var(--f-body);line-height:1.45}
+.apartArrow{align-self:center;font-size:22px;color:var(--muted);flex:none;margin-top:-30px}
+.layerTab{display:flex;align-items:center;gap:8px;font:inherit;font-size:15px;text-align:left;border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:10px;padding:6px 12px;cursor:pointer}
+.layerTab .sw{width:18px;height:8px;border-radius:4px;flex:none}
 .layerTab .tag{font-family:var(--f-mono);font-size:12px;color:var(--muted);margin-left:auto}
 .layerTab.on{border-color:var(--navy);background:var(--navy-soft);font-weight:700}
 .btn{font:inherit;font-size:16px;font-weight:700;border-radius:12px;padding:10px 18px;cursor:pointer;border:1.5px solid var(--navy);background:var(--navy);color:var(--chip-ink);text-decoration:none;display:inline-flex;align-items:center;gap:8px}
@@ -146,7 +175,8 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
 .btn.oxide:disabled{box-shadow:none}
 @keyframes nudge{0%,100%{outline:3px solid transparent;outline-offset:2px}50%{outline:4px solid var(--oxide);outline-offset:6px}}
 .btn.oxide.nudge{animation:nudge 1.3s ease-in-out infinite}
-.hud .btn.oxide{margin-left:auto;padding:8px 16px;font-size:16px}
+.hud .btn.oxide{margin-left:auto;padding:6px 12px;font-size:15px;gap:8px}
+.hud .btn.oxide::before{width:24px;height:24px;font-size:20px}
 .btn:disabled{opacity:.45;cursor:not-allowed}
 .btn:focus-visible,.opt:focus-visible,.layerTab:focus-visible,.cardBtn:focus-visible,.lay:focus-visible,.iconBtn:focus-visible{outline:3px solid var(--m2);outline-offset:2px}
 .row{display:flex;flex-wrap:wrap;gap:8px}
@@ -242,28 +272,32 @@ h1{margin:0;font-family:var(--f-display);font-weight:900;font-size:clamp(24px,3.
   <section class="game" id="gameView" hidden>
     <div class="stage">
       <div class="hud">
-        <span>已接好<span class="v" id="hDone">0/0</span></span>
-        <span>導線總長<span class="v" id="hLen">0</span> 格</span>
+        <span>接好<span class="v" id="hDone">0/0</span></span>
+        <span>總長<span class="v" id="hLen">0</span> 格</span>
         <span>用了<span class="v" id="hLayers">1</span> 層</span>
         <button type="button" class="btn oxide" id="addTop" hidden></button>
       </div>
-      <div class="msg"><span class="toast" id="toast" role="status" aria-live="polite"></span></div>
-      <div class="boardBox"><svg id="board" role="img" aria-label="晶片俯視圖，按住電晶體拖曳來接導線"></svg></div>
+      <div class="boardBox">
+        <div class="msg"><span class="toast" id="toast" role="status" aria-live="polite"></span></div>
+        <svg id="board" role="img" aria-label="晶片俯視圖，按住電晶體拖曳來接導線"></svg>
+        <p class="hint" id="hint" hidden>按住電晶體，沿著格子拖到要接的電晶體再放開；點一下畫好的導線可以拆掉</p>
+      </div>
     </div>
     <aside class="side">
       <div class="card task" id="task"></div>
-      <div class="card"><p class="label">要接的導線</p><div class="nets" id="nets"></div></div>
-      <div class="card">
-        <p class="label">導線層</p>
-        <div class="layers" id="layers"></div>
-        <div class="row" style="margin-top:10px">
-          <button class="btn ghost" id="undo" type="button">復原上一條</button>
-          <button class="btn ghost" id="reset" type="button">這關重來</button>
-        </div>
-      </div>
       <div class="card isoBox">
-        <p class="label">從側面看晶片</p>
+        <p class="label">立體的晶片（接好的導線會長在這裡）</p>
         <div id="iso"></div>
+        <div id="isoKey"></div>
+      </div>
+      <div class="card ctrl">
+        <div class="ctrlRow"><p class="label">要接的導線</p><div class="nets" id="nets"></div></div>
+        <div class="ctrlRow"><p class="label">畫在</p><div class="layers" id="layers"></div>
+          <div class="row" style="margin-left:auto">
+            <button class="btn ghost" id="undo" type="button" aria-label="復原上一條導線">↶ 復原</button>
+            <button class="btn ghost" id="reset" type="button" aria-label="這關重來">重來</button>
+          </div>
+        </div>
       </div>
     </aside>
   </section>
@@ -337,9 +371,10 @@ function givePart(id){ extra.parts = extra.parts || []; if (!extra.parts.include
 /* ================= 關卡 ================= */
 const K33 = []; for (const a of 'ABC') for (const b of '123') K33.push([a,b]);
 const LV = {
-  chip:{ name:'阿寶的晶片', W:5,H:5, nodes:{A:[0,2],B:[4,2],C:[2,0],D:[2,4]}, nets:[['A','B'],['C','D']], layers:'yes', who:'bot',
-    line:'阿寶的晶片上已經做好四個電晶體。A 要接到 B、C 要接到 D，兩條導線不能碰在一起，碰到就短路了。按住一個點，沿著格子拖到另一個點就能接線。',
-    done:s => ({ img:'bot_happy', text:'接好了！C–D 從 A–B 的上面跨過去，中間隔著不導電材料，所以兩條線都走最短的路，也不會短路。你剛剛做出來的，就是一個立體的電路。' }) },
+  // 電晶體位置與要接的導線跟 EP5 夜燈晶片一樣（EP5 簡報第 27、38 頁）：A 左上、B 右上、C 左下、D 右下，接 A–D、B–C
+  chip:{ name:'阿寶的晶片', W:5,H:5, nodes:{A:[0,0],B:[4,0],C:[0,4],D:[4,4]}, nets:[['A','D'],['B','C']], layers:'yes', who:'bot', apart:true,
+    line:'阿寶的晶片上已經做好四個電晶體。A 要接到 D、B 要接到 C，兩條導線不能碰在一起，碰到就短路了。',
+    done:s => ({ img:'bot_happy', text:'接好了！一條導線從另一條的上面跨過去，中間隔著不導電材料，所以兩條都走最短的路，也不會短路。看看旁邊的立體圖：上面那條導線靠金屬柱往下接到電晶體。' }) },
   practice:{ name:'訓練場', W:5,H:5, nodes:{A:[0,1],B:[4,1],C:[1,3],D:[4,4]}, nets:[['A','B'],['C','D']], layers:'no', who:'bot',
     line:'出發前先熱身！按住 A，沿著格子拖到 B 再放開。接好了再把 C 接到 D。',
     done:s => ({ img:'bot_happy', text:'很好，手感不錯！我們穿越到 1958 年吧，有位科學家正在煩惱。' }) },
@@ -354,7 +389,7 @@ const LV = {
     done:s => { const win = A.q4a && A.q4a.pts > 0;
       return { img:'bot_happy', text:`${win ? '你贏了，猜得真準！' : `哈哈，這次我贏了！你猜 ${A.q4a ? A.q4a.ans : '?'}，`}最少要 3 層。三條導線每兩條都會交叉，所以每一條都要放在不同的層。${s.used > 3 ? `你用了 ${s.used} 層，其實 3 層就夠囉。` : ''}`, part:'m2' }; } },
   k33big:{ name:'阿寶的晶片 · 三井三屋', W:7,H:7, nodes:{A:[1,1],B:[3,1],C:[5,1],'1':[1,5],'2':[3,5],'3':[5,5]}, nets:K33, layers:'yes', who:'bot',
-    line:'阿寶的晶片還有一區更難接：A、B、C 每一個都要接到 1、2、3，一共 9 條導線，同一層的導線不能碰在一起。這是有名的數學謎題「三井三屋」：三間屋子都要各鋪一條路到三口井，路不能交叉，在平面上一定做不到。但晶片可以往上蓋！先想想哪幾條可以放在同一層。',
+    line:'阿寶的晶片還有一區更難接：A、B、C 每一個都要接到 1、2、3，一共 9 條導線。這是有名的數學謎題「三井三屋」，路不能交叉，只用一層一定接不完。但晶片可以往上蓋！先想想哪幾條可以放在同一層。',
     done:s => ({ img:'bot_happy', text:`太強了！這 9 條線不管板子多大，只用一層一定接不起來，所以要分層規劃。最少 2 層、最短 56 格，你用了 ${s.used} 層、${s.len} 格。` }) },
   k33small:{ name:'彩蛋關 · 再縮小一點', W:5,H:5, nodes:{A:[0,0],B:[2,0],C:[4,0],'1':[0,4],'2':[2,4],'3':[4,4]}, nets:K33, layers:'yes', who:'bot',
     line:'還是那 9 條導線，可是板子縮成 5×5 了。這次要蓋幾層呢？',
@@ -408,7 +443,7 @@ const SC = {
 };
 
 const ITEMS = [
-  {id:'q4b', name:'接好交叉的兩條導線', learn:'兩條導線會交叉時，把其中一條往上蓋一層，中間用不導電材料隔開，就能走最短的路又不碰在一起。', pts:10},
+  {id:'q4b', name:'接好交叉的兩條導線', learn:'兩條導線會交叉時，把其中一條往上蓋一層，中間用不導電材料隔開，就能走最短的路又不碰在一起。上面那條導線要靠下面每一層留的接腳和金屬柱，才接得到電晶體。', pts:10},
   {id:'k33', name:'三井三屋：9 條導線分層', learn:'導線一多，有些接法不管板子多大都一定會交叉，要先規劃好哪些導線放同一層、哪些往上蓋。', pts:10},
   {id:'q6', name:'組裝阿寶的晶片', learn:'最下面是做好電晶體的矽晶圓，上面一層一層蓋導線，交錯的兩層導線之間用不導電材料隔開；做好以後可以再用外殼把整顆晶片包起來保護。', pts:15},
 ];
@@ -979,45 +1014,104 @@ function afterChange(){
   if (st.done === st.total){ S.finished = true; clearTimeout(skipTimer); setTimeout(showLevelDone, 450); }
 }
 
+// 每個電晶體的位置，最上面接到第幾層導線（沒有導線接到就不在裡面）
+function topLayerAt(layers){
+  const top = {};
+  layers.forEach((ws,k) => ws.forEach(w => { for (const c of [w.path[0], w.path[w.path.length-1]]) top[c] = Math.max(top[c] ?? -1, k); }));
+  return top;
+}
+/* 立體側視圖。依真實晶片的內連線結構（IBM 銅導線論文、US6737748 專利，見 docs/開發紀錄.md）：
+   導線埋在每一層不導電材料裡；上層導線要接到電晶體，下面每一層在電晶體的位置都留一塊接腳（landing pad），
+   接腳之間用穿過不導電材料的金屬柱接起來。這也是 EP5 第一、二層光罩上那兩個小方塊（簡報第 27、41、46 頁）。 */
 function isoSVG(lv, layers, big){
   const W = lv.W, H = lv.H;
   const used = Math.max(1, layers.reduce((m,ws,k) => ws.length ? k+1 : m, 0), layers.length);
-  const s = big ? 34 : 30, cw = s*0.866, ch = s*0.5, gap = big ? 36 : 30, thick = 16;
-  const P3 = (x,y,z) => [ (x-y)*cw, (x+y)*ch - z ];
+  // 跟棋盤同一個方向（A 左上、D 右下），只是往後傾斜：像從前面低一點的地方看同一塊晶片
+  const s = (big ? 300 : 280) / Math.max(W, H), sx = s, sk = s*0.26, sy = s*0.4, hw = big ? 26 : 22, hv = big ? 22 : 18, thick = 14;
+  const zb = k => k*(hw+hv), zw = k => zb(k) + hw/2;   // 第 k 層的底、導線所在高度
+  const P3 = (x,y,z) => [ x*sx - y*sk, y*sy - z ];
   const poly = a => a.map(p => p.map(v => v.toFixed(1)).join(',')).join(' ');
-  const minX = -H*cw - 6, maxX = W*cw + 70, minY = -used*gap - 14, maxY = (W+H)*ch + thick + 8;
-  let o = `<svg viewBox="${minX} ${minY} ${maxX-minX} ${maxY-minY}" role="img" aria-label="晶片側視堆疊圖，共 ${used} 層導線">`;
+  const topZ = zb(used-1) + hw;
+  const minX = -H*sk - 6, maxX = W*sx + 74, minY = -topZ - 10, maxY = H*sy + thick + 6;
+  const slab = (z0, z1, op) =>
+      `<polygon points="${poly([P3(0,H,z1),P3(W,H,z1),P3(W,H,z0),P3(0,H,z0)])}" style="fill:var(--oxide);opacity:${op}"/>`
+    + `<polygon points="${poly([P3(W,0,z1),P3(W,H,z1),P3(W,H,z0),P3(W,0,z0)])}" style="fill:var(--oxide);opacity:${op+.12}"/>`
+    + `<polygon points="${poly([P3(0,0,z1),P3(W,0,z1),P3(W,H,z1),P3(0,H,z1)])}" style="fill:var(--oxide);opacity:${op*.55};stroke:var(--oxide-deep);stroke-width:.8"/>`;
+  let o = `<svg viewBox="${minX} ${minY} ${maxX-minX} ${maxY-minY}" role="img" aria-label="晶片立體圖：最下面是矽晶圓，上面蓋了 ${used} 層導線，上層導線用接腳和金屬柱往下接到電晶體">`;
   o += `<polygon points="${poly([P3(0,H,0),P3(W,H,0),P3(W,H,-thick),P3(0,H,-thick)])}" style="fill:var(--si-grid)"/>`;
   o += `<polygon points="${poly([P3(W,0,0),P3(W,H,0),P3(W,H,-thick),P3(W,0,-thick)])}" style="fill:var(--si-edge)"/>`;
   o += `<polygon points="${poly([P3(0,0,0),P3(W,0,0),P3(W,H,0),P3(0,H,0)])}" style="fill:var(--si);stroke:var(--si-edge);stroke-width:1"/>`;
-  for (const [k,[x,y]] of Object.entries(lv.nodes))
+  for (const [k,[x,y]] of Object.entries(lv.nodes)){
     o += `<polygon points="${poly([P3(x+.18,y+.18,0),P3(x+.82,y+.18,0),P3(x+.82,y+.82,0),P3(x+.18,y+.82,0)])}" style="fill:var(--chip)"/>`;
+    const t = P3(x+.5, y+.5, 0);
+    o += `<text x="${t[0]}" y="${t[1]+3.5}" text-anchor="middle" style="fill:var(--chip-ink);font:700 ${big?11:10}px var(--f-mono)">${k}</text>`;
+  }
   const cxy = c => [c % W + .5, Math.floor(c / W) + .5];
-  const viaSeg = k => { let v = '';
-    layers.forEach((ws,j) => { if (j < k) return; ws.forEach(w => { for (const c of [w.path[0], w.path[w.path.length-1]]){
-      const [x,y] = cxy(c), a = P3(x,y,k*gap), b = P3(x,y,(k+1)*gap);
-      v += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" style="stroke:var(--muted);stroke-width:${big?3:2.4}"/>`; } }); });
-    return v; };
+  const top = topLayerAt(layers), cols = Object.keys(top).map(Number);
+  const pillar = (c, z0, z1) => { const [x,y] = cxy(c), a = P3(x,y,z0), b = P3(x,y,z1);
+    return `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" style="stroke:${mc(top[c])};stroke-width:${big?6:5};stroke-linecap:butt"/>`; };
+  const pad = (c, z) => { const [x,y] = cxy(c), r = .26;
+    return `<polygon points="${poly([P3(x-r,y-r,z),P3(x+r,y-r,z),P3(x+r,y+r,z),P3(x-r,y+r,z)])}" style="fill:${mc(top[c])};stroke:var(--panel);stroke-width:.8"/>`; };
   for (let k=0;k<used;k++){
-    const z = (k+1)*gap;
-    o += viaSeg(k);
-    o += `<polygon points="${poly([P3(0,H,z),P3(W,H,z),P3(W,H,z-5),P3(0,H,z-5)])}" style="fill:var(--oxide);opacity:.55"/>`;
-    o += `<polygon points="${poly([P3(W,0,z),P3(W,H,z),P3(W,H,z-5),P3(W,0,z-5)])}" style="fill:var(--oxide);opacity:.7"/>`;
-    o += `<polygon points="${poly([P3(0,0,z),P3(W,0,z),P3(W,H,z),P3(0,H,z)])}" style="fill:var(--oxide);opacity:.28;stroke:var(--oxide);stroke-width:1"/>`;
+    const z = zw(k);
+    // 從下面一路往上的金屬柱：矽晶圓到第 1 層、或上一層到這一層
+    cols.forEach(c => { if (top[c] >= k) o += pillar(c, k ? zw(k-1) : 0, z); });
+    o += slab(zb(k), z, .32);
     (layers[k] || []).forEach(w => { const p = w.path.map(c => { const [x,y] = cxy(c); return P3(x,y,z); });
       o += `<polyline points="${poly(p)}" fill="none" style="stroke:${mc(k)};stroke-width:${big?5:4};stroke-linecap:round;stroke-linejoin:round"/>`; });
-    const lp = P3(W, H/2, z);
-    o += `<text x="${lp[0]+22}" y="${lp[1]+4}" style="fill:${mc(k)};font:700 13px var(--f-mono)">M${k+1}</text>`;
+    cols.forEach(c => { if (top[c] >= k) o += pad(c, z); });
+    o += slab(z, zb(k) + hw, .2);
+    if (k < used-1) o += slab(zb(k) + hw, zb(k+1), .14);
+    const lp = P3(W, H, z);
+    o += `<text x="${lp[0]+10}" y="${lp[1]+4}" style="fill:${mc(k)};font:700 13px var(--f-body)">第 ${k+1} 層</text>`;
   }
-  const bp = P3(W, H/2, -thick/2);
-  o += `<text x="${bp[0]+22}" y="${bp[1]+4}" style="fill:var(--muted);font:700 12px var(--f-mono)">Si</text>`;
+  const bp = P3(W, H, -thick/2);
+  o += `<text x="${bp[0]+10}" y="${bp[1]+4}" style="fill:var(--muted);font:700 12px var(--f-body)">矽晶圓</text>`;
   return o + '</svg>';
+}
+// 圖例：放在立體圖下面
+const isoKey = () => `<div class="isoKey"><span><i class="k-pad"></i>接腳和金屬柱（往下接到電晶體）</span><span><i class="k-ox"></i>不導電材料</span><span><i class="k-chip"></i>電晶體</span></div>`;
+
+/* 拆開來看：把晶片從下到上一片一片畫出來，跟 EP5 的三片光罩對得起來 */
+function sliceSVG(lv, kind, wires, k, padCells){
+  const s = 44, W = lv.W, H = lv.H, c = cell => [(cell % W) * s + s/2, Math.floor(cell / W) * s + s/2];
+  const bg = kind === 'si' ? 'fill:var(--si);stroke:var(--si-edge)' : 'fill:var(--oxide-soft);stroke:var(--oxide-deep)';
+  let o = `<svg viewBox="-4 -4 ${W*s+8} ${H*s+8}" aria-hidden="true"><rect x="-2" y="-2" width="${W*s+4}" height="${H*s+4}" rx="8" style="${bg};stroke-width:2"/>`;
+  for (const [name, [x, y]] of Object.entries(lv.nodes)){
+    const cx = x*s + s/2, cy = y*s + s/2;
+    o += kind === 'si'
+      ? `<rect x="${cx-15}" y="${cy-15}" width="30" height="30" rx="6" style="fill:var(--chip)"/><text x="${cx}" y="${cy+1}" text-anchor="middle" dominant-baseline="middle" style="fill:var(--chip-ink);font:700 16px var(--f-mono)">${name}</text>`
+      : `<rect x="${cx-15}" y="${cy-15}" width="30" height="30" rx="6" style="fill:none;stroke:var(--oxide-deep);stroke-width:1.5;stroke-dasharray:4 3"/>`;
+  }
+  wires.forEach(w => { o += `<polyline points="${w.path.map(q => c(q).join(',')).join(' ')}" fill="none" style="stroke:${mc(k)};stroke-width:12;stroke-linecap:round;stroke-linejoin:round"/>`; });
+  padCells.forEach(([cell, col]) => { const [cx, cy] = c(cell); o += `<rect x="${cx-12}" y="${cy-12}" width="24" height="24" rx="3" style="fill:${mc(col)};stroke:var(--panel);stroke-width:2"/>`; });
+  return o + '</svg>';
+}
+function showApart(lv, layers, onNext){
+  const used = Math.max(1, layers.reduce((m,ws,k) => ws.length ? k+1 : m, 0));
+  const top = topLayerAt(layers), name = cell => Object.keys(lv.nodes).find(n => { const [x,y] = lv.nodes[n]; return y*lv.W + x === cell; });
+  const ups = k => Object.keys(top).map(Number).filter(c => top[c] > k);   // 要從第 k 層再往上接的電晶體位置
+  const names = cells => cells.map(name).sort().join('、');
+  const fig = (svg, cap) => `<figure class="solFig">${svg}<figcaption>${cap}</figcaption></figure>`;
+  const figs = [fig(sliceSVG(lv, 'si', [], 0, []), '<b>最下面</b><br>做好電晶體的矽晶圓')];
+  for (let k=0;k<used;k++){
+    const pads = ups(k), wires = layers[k] || [];
+    figs.push(fig(sliceSVG(lv, 'metal', wires, k, pads.map(c => [c, top[c]])),
+      `<b style="color:${mc(k)}">第 ${k+1} 層導線</b><br>${wires.map(w => L2(lv, w.net)).join('、')}${pads.length ? `，<br>加上 ${names(pads)} 的接腳` : ''}`));
+    if (k < used-1) figs.push(fig(sliceSVG(lv, 'via', [], k, pads.map(c => [c, top[c]])),
+      `<b>不導電材料</b><br>在 ${names(pads)} 挖洞、填金屬`));
+  }
+  const upAll = names(ups(0));
+  openOverlay(`<div class="place">${lv.name} · 拆開來看</div><div class="sceneBody">
+    ${talk('bot_happy', `把你的晶片從下到上一片一片拆開！上面的導線要接到電晶體，所以下面每一層在 ${upAll} 的位置都要留一塊<b>接腳</b>，中間的不導電材料也要在那裡挖洞、填金屬，電才傳得上去。下次你自己動手做晶片，也會這樣一片一片蓋上去喔！`, 'ok', true)}
+    <div class="apartRow">${figs.join('<span class="apartArrow" aria-hidden="true">→</span>')}</div>
+    <div class="actions"><button class="btn big" type="button" id="apNext">繼續前進</button></div></div>`);
+  $('apNext').onclick = onNext;
 }
 
 function renderTask(){
   const lv = L();
   let h = `<p class="lvName"><small>${bonusMode ? '彩蛋關' : S.key === 'practice' ? '熱身' : '任務關卡'}</small>${lv.name}</p>${talk(lv.who, lv.line, '', true)}`;
-  h += `<p class="how">按住電晶體，沿著格子拖到要接的電晶體再放開。點一下畫好的導線可以拆掉。</p>`;
   const acts = [];
   if (S.key === 'wall' && !S.allow && !bonusMode) acts.push(`<button class="btn" type="button" id="wallBtn">我想到辦法了！</button>`);
   if (bonusMode && S.canPeek && !S.finished) acts.push(`<button class="btn" type="button" id="peekBtn">想不出來？看答案</button>`);
@@ -1032,22 +1126,21 @@ function renderTask(){
 }
 function renderNets(){
   $('nets').innerHTML = L().nets.map(([a,b],i) => { const f = wireOf(i);
-    return `<div class="net ${f?'done':''}"><span class="sw" style="${f?`background:${mc(f.k)}`:''}"></span>${a}–${b}${f?`<span class="ly">M${f.k+1}</span>`:''}</div>`; }).join('');
+    return `<div class="net ${f?'done':''}" title="${f ? `${a}–${b} 接在第 ${f.k+1} 層` : `${a}–${b} 還沒接`}"><span class="sw" style="${f?`background:${mc(f.k)}`:''}"></span>${a}–${b}</div>`; }).join('');
 }
 function renderLayers(){
   let h = '';
+  // 蓋新一層的粉紅色按鈕只放棋盤正上方（#addTop），這裡只切換在哪一層畫
   if (S.allow){
-    for (let k=S.layers.length-1;k>=0;k--)
-      h += `<button type="button" class="layerTab ${k===S.cur?'on':''}" data-k="${k}"><span class="sw" style="background:${mc(k)}"></span>第 ${k+1} 層導線<span class="tag">M${k+1} · ${S.layers[k].length} 條</span></button>`;
+    for (let k=0;k<S.layers.length;k++)
+      h += `<button type="button" class="layerTab ${k===S.cur?'on':''}" data-k="${k}" aria-label="在第 ${k+1} 層畫導線，已經有 ${S.layers[k].length} 條"><span class="sw" style="background:${mc(k)}"></span>第 ${k+1} 層</button>`;
     const n = S.layers.length;
-    h += `<button type="button" class="btn oxide${S.nudge && n < MAXL ? ' nudge' : ''}" id="addL" ${n>=MAXL?'disabled':''}>${n>=MAXL?'最多蓋到第 5 層':`鋪一層不導電材料，蓋第 ${n+1} 層`}</button>`;
-    if (n > 1 && !S.layers[n-1].length) h += `<button type="button" class="btn ghost" id="rmL">拆掉空的第 ${n} 層</button>`;
+    if (n > 1 && !S.layers[n-1].length) h += `<button type="button" class="iconBtn" id="rmL" aria-label="拆掉空的第 ${n} 層" title="拆掉空的第 ${n} 層">✕</button>`;
   } else {
-    h += `<div class="layerTab on"><span class="sw" style="background:${mc(0)}"></span>第 1 層導線<span class="tag">M1 · ${S.layers[0].length} 條</span></div><p class="small" style="margin:4px 0 0">目前只能在這一層畫導線。</p>`;
+    h += `<div class="layerTab on"><span class="sw" style="background:${mc(0)}"></span>第 1 層</div><span class="small">目前只能在這一層畫導線。</span>`;
   }
   $('layers').innerHTML = h;
   $('layers').querySelectorAll('[data-k]').forEach(b => b.onclick = () => { S.cur = +b.dataset.k; renderAll(); });
-  const a = $('addL'); if (a) a.onclick = addLayer;
   const r = $('rmL'); if (r) r.onclick = () => { S.layers.pop(); S.cur = Math.min(S.cur, S.layers.length-1); renderAll(); };
 }
 function addLayer(){ if (S.layers.length >= MAXL) return; S.nudge = false; S.layers.push([]); S.cur = S.layers.length-1; sfx('tap'); toast(`鋪好不導電材料了，現在在第 ${S.cur+1} 層畫導線`); renderAll(); }
@@ -1059,7 +1152,16 @@ function renderHud(){
   top.classList.toggle('nudge', !!S.nudge);
 }
 $('addTop').onclick = () => { if (S && S.allow) addLayer(); };
-function renderAll(){ renderMap(); renderTask(); renderNets(); renderLayers(); renderHud(); renderBoard(); $('iso').innerHTML = isoSVG(L(), S.layers, false); }
+function renderAll(){ renderMap(); renderTask(); renderNets(); renderLayers(); renderHud(); renderBoard(); $('iso').innerHTML = isoSVG(L(), S.layers, false); $('isoKey').innerHTML = isoKey(); $('hint').hidden = stats().done > 0; fitIso(); }
+// 平板橫放時讓右欄剛好一個畫面：每關說明長短不同，立體圖用剩下的高度
+function fitIso(){
+  const svg = $('iso').querySelector('svg'); if (!svg || $('gameView').hidden) return;
+  if (innerWidth <= 900){ svg.style.maxHeight = ''; return; }
+  svg.style.maxHeight = '0px';
+  const side = document.querySelector('.side'), r = side.getBoundingClientRect();
+  svg.style.maxHeight = Math.max(120, innerHeight - (r.top + scrollY) - r.height - 12) + 'px';
+}
+addEventListener('resize', fitIso);
 
 function openWallChoice(){
   if (S.allow || !$('overlay').hidden) return;
@@ -1090,10 +1192,11 @@ function showLevelDone(){
     <div class="dlgGrid">
       <div>${talk(r.img, r.text, 'ok', true)}${r.part && !bonusMode ? gainHTML(r.part) : ''}
         <div class="stats"><div class="h">導線層數</div><div class="h">導線總長</div><div class="n">${st.used} 層</div><div class="n">${st.len} 格</div></div></div>
-      <div>${isoSVG(lv, S.layers, true)}</div>
+      <div>${isoSVG(lv, S.layers, true)}${isoKey()}</div>
     </div>
-    <div class="actions">${SOLUTIONS[S.key] ? '<button class="btn big" type="button" id="seeSol">看最佳解答</button>' : ''}<button class="btn ${SOLUTIONS[S.key] ? 'ghost' : 'big'}" type="button" id="dn">${bonusMode ? '回到工程師證' : '繼續前進'}</button></div></div>`);
-  $('dn').onclick = () => { if (bonusMode) renderResult(); else next(); };
+    <div class="actions">${SOLUTIONS[S.key] ? '<button class="btn big" type="button" id="seeSol">看最佳解答</button>' : ''}<button class="btn ${SOLUTIONS[S.key] ? 'ghost' : 'big'}" type="button" id="dn">${bonusMode ? '回到工程師證' : lv.apart ? '拆開來看每一層' : '繼續前進'}</button></div></div>`);
+  const layers = S.layers;
+  $('dn').onclick = () => { if (bonusMode) renderResult(); else if (lv.apart) showApart(lv, layers, next); else next(); };
   const ss = $('seeSol'); if (ss) ss.onclick = () => showSolution(S.key, st);
 }
 
@@ -1121,7 +1224,7 @@ function showSolution(key, mine){
     ${talk('bot_happy', `這是最省的接法：最少 ${d.minL} 層，導線加起來最短 ${d.len} 格。${cmp}一層一層看，同一層的導線都不會碰到，交錯的地方都分在不同層！`, 'ok', true)}
     <div class="solGrid">${layers.map((ws, k) => miniBoard(lv, ws, k)).join('')}</div>
     <p class="small" style="text-align:center;margin:10px 0 0">疊起來就是這樣：</p>
-    <div class="solIso">${isoSVG(lv, layers, true)}</div>
+    <div class="solIso">${isoSVG(lv, layers, true)}${isoKey()}</div>
     <div class="actions">${bonusMode ? '<button class="btn big" type="button" id="solAgain">我也來試試</button><button class="btn ghost" type="button" id="solBack">回到工程師證</button>' : '<button class="btn big" type="button" id="solNext">繼續前進</button>'}</div></div>`);
   const sa = $('solAgain'); if (sa) sa.onclick = () => { closeOverlay(); startLevel(key); };
   const sb = $('solBack'); if (sb) sb.onclick = () => renderResult();
